@@ -39,9 +39,11 @@ function findNextAttackPosition(units, nextAttackPosition) {
 
 function simulateDefend(units, nextAttackPosition, attackedPosition) {
   const unit = units[attackedPosition];
-  if (unit.attacksLeft > 0) {
-    unit.attacksLeft -= 1;
+  if (unit.attacksLeft <= 0) {
+    throw Error("Trying to attack a unit that doesn't exist");
   }
+
+  unit.attacksLeft -= 1;
 
   const newNextAttackPosition =
     unit.attacksLeft === 0 && attackedPosition === nextAttackPosition
