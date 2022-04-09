@@ -52,7 +52,7 @@ Here are a few valid `--units` arguments:
 1 1 0 0
 ```
 
-The program uses the Monte Carlo method to approximate the chances `--runs` is the number of Monte Carlo simulations the program will do.
+The program uses the Monte Carlo method to approximate the chances of each unit attacking. `--runs` is the number of Monte Carlo simulations the program will do.
 
 `--debug` enables extra debug printing.
 
