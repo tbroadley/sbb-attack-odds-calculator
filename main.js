@@ -1,5 +1,5 @@
 const { readFileSync } = require('fs');
-
+const sum = require('lodash/sum');
 const yargs = require('yargs/yargs');
 
 const argv = yargs(process.argv).argv;
@@ -133,3 +133,4 @@ for (let i = 0; i < RUNS; i += 1) {
 }
 
 console.log(outcomes.map(it => it / RUNS));
+console.log(`Total attacks: ${sum(outcomes) / RUNS}`);
