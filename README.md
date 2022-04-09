@@ -38,7 +38,7 @@ yarn
 ## Running
 
 ```shell
-yarn run start --units "1 1 1 1" --runs 10000 --debug
+yarn start --units "1 1 1 1" --runs 10000
 ```
 
 `--units` is a string containing four unit descriptions separated by single spaces. A unit description starts with a single digit (0-9) describing how many times the unit can attack or be attacked before it dies. Optionally, you can append "R" to a digit to make the unit ranged, or "S" to make it resummon once.
@@ -55,8 +55,6 @@ Here are a few valid `--units` arguments:
 ```
 
 The program uses the Monte Carlo method to approximate the chances of each unit attacking. `--runs` is the number of Monte Carlo simulations the program will do.
-
-`--debug` enables extra debug printing.
 
 The program prints an array of four numbers to stdout. The first number of the array is the likelihood that the first unit will attack, the second number the likelihood for the second unit, etc.
 
