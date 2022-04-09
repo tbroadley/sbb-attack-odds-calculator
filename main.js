@@ -1,8 +1,12 @@
 const { readFileSync } = require('fs');
 
-const RUNS = 100000;
+const yargs = require('yargs/yargs');
 
-const DEBUG = process.argv[2] === 'debug';
+const argv = yargs(process.argv).argv;
+
+const UNITS = argv.units.split(' ').map(parseUnit);
+const RUNS = argv.runs ? Number(argv.runs) : 1000;
+const DEBUG = !!argv.debug;
 
 function debug(...args) {
 	if (DEBUG) {
@@ -115,16 +119,12 @@ function simulateRun(units) {
 	return result;
 }
 
-const content = readFileSync('test.txt').toString();
-const firstLine = content.split('\n')[0];
-
-const units = firstLine.split(' ').map(parseUnit);
-if (units.length != 4) process.exit(1);
+if (UNITS.length != 4) process.exit(1);
 
 const outcomes = [0, 0, 0, 0];
 for (let i = 0; i < RUNS; i += 1) {
 	console.error(`Run ${i + 1}`)
-	const result = simulateRun(units.map(clone));
+	const result = simulateRun(UNITS.map(clone));
 
 	for (let j = 0; j < result.length; j += 1) {
 		outcomes[j] += result[j];
