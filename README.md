@@ -2,11 +2,25 @@
 
 Given a configuration of units in the front row of a Storybook Brawl board, this tool approximates the probability of each front-row unit attacking.
 
-## Use cases
+## Examples
 
 You want to figure out how likely it is that your White Stag, Chupacabra, or Copycat will attack if you put it in position 2.
 
-You want to figure out how likely it is that your front-row ranged unit will attack if you put in in position 2 instead of position 1.
+```
+> yarn run start --units "1 1 1 1"
+[0.8816, 0.5752, 0.3538, 0.1854]
+```
+
+So roughly 56%.
+
+What if the unit in position 1 is ranged?
+
+```
+> yarn run start --units "1R 1 1 1"
+[0.8791, 0.6675, 0.4297, 0.3353]
+```
+
+Roughly 67%, or 2/3.
 
 ## Prerequisites
 
