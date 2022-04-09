@@ -2,6 +2,14 @@ const { readFileSync } = require('fs');
 
 const RUNS = 100000;
 
+const DEBUG = process.argv[2] === 'debug';
+
+function debug(...args) {
+	if (DEBUG) {
+		console.error(...args);
+	}
+}
+
 function parseUnit(string) {
 	return { 
 		attacksLeft: Number(string[0]),
@@ -42,7 +50,7 @@ function simulateRun(units) {
 	const enemyAttacks = rand(0.5);
 	if (enemyAttacks) {
 		// Defend
-		// console.error("Defending", units, nextAttackPosition);
+		debug("Defending", units, nextAttackPosition);
 
 		const attackedPosition = randUnitPosition(units);
 		const unit = units[attackedPosition];
@@ -61,7 +69,7 @@ function simulateRun(units) {
 
 	while (units.some(it => it.attacksLeft > 0) && nextAttackPosition < 4) {
 		// Attack
-		// console.error("Attacking", units, nextAttackPosition);
+		debug("Attacking", units, nextAttackPosition);
 
 		const attacker = units[nextAttackPosition];
 		if (attacker.attacksLeft <= 0) {
@@ -85,7 +93,7 @@ function simulateRun(units) {
 		}
 
 		// Defend
-		// console.error("Defending", units, nextAttackPosition);
+		debug("Defending", units, nextAttackPosition);
 
 		const attackedPosition = randUnitPosition(units);
 		if (randUnitPosition === -1) break;
