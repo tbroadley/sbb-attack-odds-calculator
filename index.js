@@ -1,128 +1,134 @@
-const { readFileSync } = require('fs');
-const sum = require('lodash/sum');
-const yargs = require('yargs/yargs');
+const { readFileSync } = require("fs");
+const sum = require("lodash/sum");
+const yargs = require("yargs/yargs");
 
 function parseUnit(string) {
-	return { 
-		attacksLeft: Number(string[0]),
-		ranged: string.length > 1 && string[1] === 'R',
-		resummon: string.length > 1 && string[1] === 'S',
-	};
+  return {
+    attacksLeft: Number(string[0]),
+    ranged: string.length > 1 && string[1] === "R",
+    resummon: string.length > 1 && string[1] === "S",
+  };
 }
 
 function clone(unit) {
-	return { attacksLeft: unit.attacksLeft, ranged: unit.ranged, resummon: unit.resummon };
+  return {
+    attacksLeft: unit.attacksLeft,
+    ranged: unit.ranged,
+    resummon: unit.resummon,
+  };
 }
 
 function rand(threshold) {
-	return Math.random() < threshold;
+  return Math.random() < threshold;
 }
 
 function randUnitPosition(units) {
-	const unitsWithIndices = units.map((unit, index) => ({ ...unit, index }));
-	const aliveUnits = unitsWithIndices.filter(it => it.attacksLeft > 0);
-	if (aliveUnits.length === 0) return -1;
+  const unitsWithIndices = units.map((unit, index) => ({ ...unit, index }));
+  const aliveUnits = unitsWithIndices.filter((it) => it.attacksLeft > 0);
+  if (aliveUnits.length === 0) return -1;
 
-	const aliveUnitIndex = Math.floor(Math.random() * aliveUnits.length);
-	return aliveUnits[aliveUnitIndex].index;
+  const aliveUnitIndex = Math.floor(Math.random() * aliveUnits.length);
+  return aliveUnits[aliveUnitIndex].index;
 }
 
 function findNextAttackPosition(units, nextAttackPosition) {
-	return units.findIndex((unit, index) => index > nextAttackPosition && unit.attacksLeft > 0);
+  return units.findIndex(
+    (unit, index) => index > nextAttackPosition && unit.attacksLeft > 0
+  );
 }
 
 function simulateRun(units) {
-	const result = [0, 0, 0, 0];
-	if (units.every(it => it.attacksLeft <= 0)) {
-		return result;
-	}
+  const result = [0, 0, 0, 0];
+  if (units.every((it) => it.attacksLeft <= 0)) {
+    return result;
+  }
 
-	let nextAttackPosition = findNextAttackPosition(units, -1);
-	if (nextAttackPosition === -1) return result;
+  let nextAttackPosition = findNextAttackPosition(units, -1);
+  if (nextAttackPosition === -1) return result;
 
-	const enemyAttacks = rand(0.5);
-	if (enemyAttacks) {
-		const attackedPosition = randUnitPosition(units);
-		const unit = units[attackedPosition];
-		if (unit.attacksLeft > 0) {
-			unit.attacksLeft -= 1;
-		}
-		if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
-			nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
-			if (nextAttackPosition === -1) return result;
-		}
-		if (unit.attacksLeft === 0 && unit.resummon) {
-			unit.attacksLeft = 1;
-			unit.resummon = false;
-		}
-	}
+  const enemyAttacks = rand(0.5);
+  if (enemyAttacks) {
+    const attackedPosition = randUnitPosition(units);
+    const unit = units[attackedPosition];
+    if (unit.attacksLeft > 0) {
+      unit.attacksLeft -= 1;
+    }
+    if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
+      nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
+      if (nextAttackPosition === -1) return result;
+    }
+    if (unit.attacksLeft === 0 && unit.resummon) {
+      unit.attacksLeft = 1;
+      unit.resummon = false;
+    }
+  }
 
-	while (units.some(it => it.attacksLeft > 0) && nextAttackPosition < 4) {
-		const attacker = units[nextAttackPosition];
-		if (attacker.attacksLeft <= 0) {
-			throw Error('Unit with no attacks left is attacking');
-		}
+  while (units.some((it) => it.attacksLeft > 0) && nextAttackPosition < 4) {
+    const attacker = units[nextAttackPosition];
+    if (attacker.attacksLeft <= 0) {
+      throw Error("Unit with no attacks left is attacking");
+    }
 
-		if (!attacker.ranged) {
-			attacker.attacksLeft -= 1;
-		}
+    if (!attacker.ranged) {
+      attacker.attacksLeft -= 1;
+    }
 
-		if (attacker.attacksLeft === 0 && attacker.resummon) {
-			attacker.attacksLeft = 1;
-			attacker.resummon = false;
-		}
+    if (attacker.attacksLeft === 0 && attacker.resummon) {
+      attacker.attacksLeft = 1;
+      attacker.resummon = false;
+    }
 
-		result[nextAttackPosition] += 1;
+    result[nextAttackPosition] += 1;
 
-		if (!attacker.resummon) {
-			nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
-			if (nextAttackPosition === -1) break;
-		}
+    if (!attacker.resummon) {
+      nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
+      if (nextAttackPosition === -1) break;
+    }
 
-		const attackedPosition = randUnitPosition(units);
-		if (randUnitPosition === -1) break;
+    const attackedPosition = randUnitPosition(units);
+    if (randUnitPosition === -1) break;
 
-		const unit = units[attackedPosition];
-		if (unit.attacksLeft > 0) {
-			unit.attacksLeft -= 1;
-		}
-		if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
-			nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
-			if (nextAttackPosition === -1) break;
-		}
-		if (unit.attacksLeft === 0 && unit.resummon) {
-			unit.attacksLeft = 1;
-			unit.resummon = false;
-		}
-	}
+    const unit = units[attackedPosition];
+    if (unit.attacksLeft > 0) {
+      unit.attacksLeft -= 1;
+    }
+    if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
+      nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
+      if (nextAttackPosition === -1) break;
+    }
+    if (unit.attacksLeft === 0 && unit.resummon) {
+      unit.attacksLeft = 1;
+      unit.resummon = false;
+    }
+  }
 
-	return result;
+  return result;
 }
 
 function main() {
-	const argv = yargs(process.argv).argv;
+  const argv = yargs(process.argv).argv;
 
-	const UNITS = argv.units.split(' ').map(parseUnit);
-	if (UNITS.length != 4) process.exit(1);
+  const UNITS = argv.units.split(" ").map(parseUnit);
+  if (UNITS.length != 4) process.exit(1);
 
-	const RUNS = argv.runs ? Number(argv.runs) : 10000;
+  const RUNS = argv.runs ? Number(argv.runs) : 10000;
 
-	const outcomes = [0, 0, 0, 0];
-	for (let i = 0; i < RUNS; i += 1) {
-		const result = simulateRun(UNITS.map(clone));
+  const outcomes = [0, 0, 0, 0];
+  for (let i = 0; i < RUNS; i += 1) {
+    const result = simulateRun(UNITS.map(clone));
 
-		for (let j = 0; j < result.length; j += 1) {
-			outcomes[j] += result[j];
-		}
-	}
+    for (let j = 0; j < result.length; j += 1) {
+      outcomes[j] += result[j];
+    }
+  }
 
-	console.log(outcomes.map(it => it / RUNS));
-	console.log(`Total attacks: ${sum(outcomes) / RUNS}`);
+  console.log(outcomes.map((it) => it / RUNS));
+  console.log(`Total attacks: ${sum(outcomes) / RUNS}`);
 }
 
 module.exports = {
-	parseUnit,
-	randUnitPosition,
-	findNextAttackPosition,
-	main,
+  parseUnit,
+  randUnitPosition,
+  findNextAttackPosition,
+  main,
 };
