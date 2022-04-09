@@ -55,7 +55,7 @@ function simulateDefend(units, nextAttackPosition, attackedPosition) {
     unit.resummon = false;
   }
 
-  return newNextAttackPosition;
+  return { newNextAttackPosition };
 }
 
 function simulateRun(units) {
