@@ -22,6 +22,8 @@ What if the unit in position 1 is ranged?
 
 Roughly 67%, or 2/3.
 
+To estimate how much value you'll get out of Oni King or Spear of Achilles, you could sum the numbers in the output and multiply by the stat gain from the unit/treasure.
+
 ## Prerequisites
 
 - Node.js
