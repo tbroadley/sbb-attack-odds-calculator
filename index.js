@@ -45,15 +45,15 @@ function simulateDefend(units, nextAttackPosition, attackedPosition) {
 
   unit.attacksLeft -= 1;
 
-  const newNextAttackPosition =
-    unit.attacksLeft === 0 && attackedPosition === nextAttackPosition
-      ? findNextAttackPosition(units, nextAttackPosition)
-      : nextAttackPosition;
-
   if (unit.attacksLeft === 0 && unit.resummon) {
     unit.attacksLeft = 1;
     unit.resummon = false;
   }
+
+  const newNextAttackPosition =
+    unit.attacksLeft === 0 && attackedPosition === nextAttackPosition
+      ? findNextAttackPosition(units, nextAttackPosition)
+      : nextAttackPosition;
 
   return { newNextAttackPosition };
 }
