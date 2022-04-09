@@ -124,7 +124,7 @@ if (UNITS.length != 4) process.exit(1);
 
 const outcomes = [0, 0, 0, 0];
 for (let i = 0; i < RUNS; i += 1) {
-	console.error(`Run ${i + 1}`)
+	debug(`Run ${i + 1}`)
 	const result = simulateRun(UNITS.map(clone));
 
 	for (let j = 0; j < result.length; j += 1) {
