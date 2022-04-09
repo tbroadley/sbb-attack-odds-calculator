@@ -49,7 +49,7 @@ function simulateRun(units) {
 		return result;
 	}
 
-	let nextAttackPosition = findNextAttackPosition(units, 0);
+	let nextAttackPosition = findNextAttackPosition(units, -1);
 	if (nextAttackPosition === -1) return result;
 
 	const enemyAttacks = rand(0.5);
