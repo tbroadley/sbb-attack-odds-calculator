@@ -19,3 +19,15 @@ describe("parseUnit", () => {
 		expect(parseUnit("0")).to.deep.equal({ attacksLeft: 0, ranged: false, resummon: false });
 	});
 });
+
+describe("randUnitPosition", () => {
+	it("returns -1 if there are no units", () => {
+		const units = "0 0 0 0".split(' ').map(parseUnit);
+		expect(randUnitPosition(units)).to.equal(-1);
+	})
+
+	it("returns the unit's position if a single unit exists", () => {
+		const units = "0 1 0 0".split(' ').map(parseUnit);
+		expect(randUnitPosition(units)).to.equal(1);
+	})
+});
