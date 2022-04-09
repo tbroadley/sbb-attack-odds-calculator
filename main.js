@@ -5,7 +5,7 @@ const yargs = require('yargs/yargs');
 const argv = yargs(process.argv).argv;
 
 const UNITS = argv.units.split(' ').map(parseUnit);
-const RUNS = argv.runs ? Number(argv.runs) : 1000;
+const RUNS = argv.runs ? Number(argv.runs) : 10000;
 const DEBUG = !!argv.debug;
 
 function debug(...args) {
