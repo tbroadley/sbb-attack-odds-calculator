@@ -51,3 +51,30 @@ describe("randUnitPosition", () => {
     expect(randUnitPosition(units)).to.equal(1);
   });
 });
+
+describe("findNextAttackPosition", () => {
+  it("returns -1 if there are no units", () => {
+    const units = "0 0 0 0".split(" ").map(parseUnit);
+    expect(findNextAttackPosition(units, -1)).to.equal(-1);
+  });
+
+  it("returns -1 if there are no units in front of the current attack position", () => {
+    const units = "1 1 0 0".split(" ").map(parseUnit);
+    expect(findNextAttackPosition(units, 1)).to.equal(-1);
+  });
+
+  it("returns the next unit if it can attack", () => {
+    const units = "1 1 0 0".split(" ").map(parseUnit);
+    expect(findNextAttackPosition(units, 0)).to.equal(1);
+  });
+
+  it("skips units that can't attack", () => {
+    const units = "1 0 0 1".split(" ").map(parseUnit);
+    expect(findNextAttackPosition(units, 0)).to.equal(3);
+  });
+
+  it("can find the first unit if the current nextAttackPosition is -1", () => {
+    const units = "1 0 0 1".split(" ").map(parseUnit);
+    expect(findNextAttackPosition(units, -1)).to.equal(0);
+  });
+});
