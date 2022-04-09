@@ -37,6 +37,25 @@ function findNextAttackPosition(units, nextAttackPosition) {
   );
 }
 
+function simulateDefend(units, nextAttackPosition, attackedPosition) {
+  const unit = units[attackedPosition];
+  if (unit.attacksLeft > 0) {
+    unit.attacksLeft -= 1;
+  }
+
+  const newNextAttackPosition =
+    unit.attacksLeft === 0 && attackedPosition === nextAttackPosition
+      ? findNextAttackPosition(units, nextAttackPosition)
+      : nextAttackPosition;
+
+  if (unit.attacksLeft === 0 && unit.resummon) {
+    unit.attacksLeft = 1;
+    unit.resummon = false;
+  }
+
+  return newNextAttackPosition;
+}
+
 function simulateRun(units) {
   const result = [0, 0, 0, 0];
   if (units.every((it) => it.attacksLeft <= 0)) {
@@ -49,18 +68,15 @@ function simulateRun(units) {
   const enemyAttacks = rand(0.5);
   if (enemyAttacks) {
     const attackedPosition = randUnitPosition(units);
-    const unit = units[attackedPosition];
-    if (unit.attacksLeft > 0) {
-      unit.attacksLeft -= 1;
-    }
-    if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
-      nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
-      if (nextAttackPosition === -1) return result;
-    }
-    if (unit.attacksLeft === 0 && unit.resummon) {
-      unit.attacksLeft = 1;
-      unit.resummon = false;
-    }
+    if (attackedPosition === -1) return result;
+
+    const { newNextAttackPosition } = simulateDefend(
+      units,
+      nextAttackPosition,
+      attackedPosition
+    );
+    nextAttackPosition = newNextAttackPosition;
+    if (nextAttackPosition === -1) return result;
   }
 
   while (units.some((it) => it.attacksLeft > 0) && nextAttackPosition < 4) {
@@ -88,18 +104,13 @@ function simulateRun(units) {
     const attackedPosition = randUnitPosition(units);
     if (randUnitPosition === -1) break;
 
-    const unit = units[attackedPosition];
-    if (unit.attacksLeft > 0) {
-      unit.attacksLeft -= 1;
-    }
-    if (unit.attacksLeft === 0 && attackedPosition === nextAttackPosition) {
-      nextAttackPosition = findNextAttackPosition(units, nextAttackPosition);
-      if (nextAttackPosition === -1) break;
-    }
-    if (unit.attacksLeft === 0 && unit.resummon) {
-      unit.attacksLeft = 1;
-      unit.resummon = false;
-    }
+    const { newNextAttackPosition } = simulateDefend(
+      units,
+      nextAttackPosition,
+      attackedPosition
+    );
+    nextAttackPosition = newNextAttackPosition;
+    if (nextAttackPosition === -1) break;
   }
 
   return result;
